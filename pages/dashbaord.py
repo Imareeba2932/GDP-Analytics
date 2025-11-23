@@ -118,3 +118,53 @@ st.subheader("🌳 GDP Treemap (2025)")
 fig = px.treemap(df, path=["Country"], values="2025", title="GDP Treemap (2025)")
 st.plotly_chart(fig)
 st.markdown("**Conclusion:** Quickly identify the largest economies and their relative sizes.")
+
+# ------------------------
+# Additional Plotly Charts (5+ neat and clean plots)
+# ------------------------
+
+st.subheader("🗺️ World GDP Choropleth (2025)")
+try:
+    fig = px.choropleth(df, locations='Country', locationmode='country names', color='2025',
+                        color_continuous_scale='Plasma', title='World GDP (2025) — Choropleth')
+    fig.update_layout(margin=dict(l=0, r=0, t=50, b=0))
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("**Insight:** A geographic view of 2025 GDP highlights regional concentrations of economic size.")
+except Exception as e:
+    st.warning(f"Choropleth could not be rendered: {e}")
+
+
+st.subheader("🔬 GDP vs Growth Scatter (2025 vs Growth % 2020-2025)")
+df_scatter = df_growth.copy()
+df_scatter['GDP_2025_M'] = df_scatter['2025']
+fig = px.scatter(df_scatter, x='GDP_2025_M', y='Growth %', hover_name='Country',
+                 color='Growth %', color_continuous_scale='Turbo',
+                 title='GDP (2025) vs Growth % (2020→2025)')
+fig.update_layout(xaxis_title='GDP (2025, Millions USD)', yaxis_title='Growth % (2020→2025)')
+st.plotly_chart(fig)
+st.markdown("**Insight:** Compare the size of an economy to its growth rate; watch out for small but fast-growing economies.")
+
+
+st.subheader("📊 Correlation Heatmap (Years 2020–2025)")
+years = ['2020','2021','2022','2023','2024','2025']
+corr = df[years].corr()
+fig = px.imshow(corr, text_auto=True, color_continuous_scale='Viridis',
+                title='Correlation of GDP between Years (2020–2025)')
+fig.update_layout(width=800, height=500)
+st.plotly_chart(fig)
+st.markdown("**Insight:** Shows how consistent country rankings and magnitudes are across years.")
+
+
+st.subheader("📦 GDP Distribution by Year (Box Plot)")
+fig = px.box(df_melted, x='Year', y='GDP', points='outliers', color='Year',
+             title='GDP Distribution Across Countries by Year')
+st.plotly_chart(fig)
+st.markdown("**Insight:** Compare spread and outliers of GDP each year.")
+
+
+st.subheader("📈 Distribution of GDP (2025) — Histogram")
+fig = px.histogram(df, x='2025', nbins=30, marginal='box',
+                   title='Distribution of GDP in 2025 (per country)')
+fig.update_layout(xaxis_title='GDP (2025, Millions USD)', yaxis_title='Count of Countries')
+st.plotly_chart(fig)
+st.markdown("**Insight:** Understand how GDPs are distributed in 2025; many countries cluster at lower values.")
